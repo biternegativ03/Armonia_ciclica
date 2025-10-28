@@ -2,9 +2,15 @@ package com.armoniaciclica.app.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
+import android.app.DatePickerDialog
+import androidx.compose.ui.platform.LocalContext
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,11 +23,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.armoniaciclica.app.ui.theme.PinkPrimary
 import com.armoniaciclica.app.ui.theme.PurplePrimary
+import com.example.uinavegacion.viewmodel.SharedViewModel
 
 @Composable
 fun LastPeriodScreen(
+    sharedViewModel: SharedViewModel,
     onConfirmDateClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val today = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
+
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+
+    // DatePickerDialog
+    val calendar = Calendar.getInstance()
+    val dpd = DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -74,11 +99,12 @@ fun LastPeriodScreen(
             
             Spacer(modifier = Modifier.height(40.dp))
             
-            // Placeholder para calendario
+            // Selector de fecha - muestra la fecha seleccionada o el placeholder
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .height(200.dp),
+                    .height(200.dp)
+                    .clickable { dpd.show() },
                 colors = CardDefaults.cardColors(
                     containerColor = Color.LightGray.copy(alpha = 0.3f)
                 ),
@@ -88,11 +114,20 @@ fun LastPeriodScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "Calendario de selección",
-                        color = Color.Gray,
-                        fontSize = 16.sp
-                    )
+                    if (selectedDate != null) {
+                        Text(
+                            text = selectedDate!!.format(formatter),
+                            color = Color.Black,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    } else {
+                        Text(
+                            text = "Calendario de selección",
+                            color = Color.Gray,
+                            fontSize = 16.sp
+                        )
+                    }
                 }
             }
             
@@ -109,24 +144,33 @@ fun LastPeriodScreen(
             
             Spacer(modifier = Modifier.height(40.dp))
             
-            // Botón de confirmar fecha
-            Button(
-                onClick = onConfirmDateClick,
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PinkPrimary
-                ),
-                shape = RoundedCornerShape(25.dp)
-            ) {
-                Text(
-                    text = "Confirmar fecha",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+                    // Botón de confirmar fecha (deshabilitado si no hay fecha seleccionada)
+                    val canConfirm = selectedDate != null
+
+                    Button(
+                        onClick = {
+                            if (canConfirm) {
+                                // Guardar la fecha seleccionada en el ViewModel compartido
+                                sharedViewModel.lastPeriodDate = selectedDate
+                                onConfirmDateClick()
+                            }
+                        },
+                        enabled = canConfirm,
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (canConfirm) PinkPrimary else Color.LightGray
+                        ),
+                        shape = RoundedCornerShape(25.dp)
+                    ) {
+                        Text(
+                            text = "Confirmar fecha",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
         }
     }
 }

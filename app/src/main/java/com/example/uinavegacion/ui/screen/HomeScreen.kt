@@ -93,7 +93,7 @@ fun HomeScreen(
                     }
                 }
                 
-                // Ciclo visual
+                // Ciclo visual (vista simple de ejemplo)
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -108,11 +108,29 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = "Ciclo Visual",
-                            fontSize = 16.sp,
-                            color = Color.Gray
-                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            val totalCycleDays = 28f
+                            val currentDay = 16f
+                            val progress = currentDay / totalCycleDays
+                            CircularProgressIndicator(
+                                progress = progress,
+                                modifier = Modifier.size(96.dp),
+                                color = FollicularGreen,
+                                strokeWidth = 8.dp
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = "Día ${currentDay.toInt()} — Fase Lútea",
+                                fontSize = 16.sp,
+                                color = Color.Black
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "Próximo período estimado: 12 nov",
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
                 
@@ -208,12 +226,12 @@ fun BottomNavigation(
             ) {
                 Icon(
                     imageVector = Icons.Default.Home,
-                    contentDescription = "Home",
+                    contentDescription = "Inicio",
                     tint = if (selectedItem == "home") PinkPrimary else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "Home",
+                    text = "Inicio",
                     fontSize = 12.sp,
                     color = if (selectedItem == "home") PinkPrimary else Color.Gray
                 )
@@ -226,12 +244,12 @@ fun BottomNavigation(
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = "Calendar",
+                    contentDescription = "Calendario",
                     tint = if (selectedItem == "calendar") PinkPrimary else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "Calendar",
+                    text = "Calendario",
                     fontSize = 12.sp,
                     color = if (selectedItem == "calendar") PinkPrimary else Color.Gray
                 )
@@ -244,12 +262,12 @@ fun BottomNavigation(
             ) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
-                    contentDescription = "Symptoms",
+                    contentDescription = "Síntomas",
                     tint = if (selectedItem == "symptoms") PinkPrimary else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "Symptoms",
+                    text = "Síntomas",
                     fontSize = 12.sp,
                     color = if (selectedItem == "symptoms") PinkPrimary else Color.Gray
                 )
@@ -262,12 +280,12 @@ fun BottomNavigation(
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "Profile",
+                    contentDescription = "Perfil",
                     tint = if (selectedItem == "profile") PinkPrimary else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "Profile",
+                    text = "Perfil",
                     fontSize = 12.sp,
                     color = if (selectedItem == "profile") PinkPrimary else Color.Gray
                 )

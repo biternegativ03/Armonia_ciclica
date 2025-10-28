@@ -4,11 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.armoniaciclica.app.navigation.AppNavGraph
+import com.armoniaciclica.app.ui.components.AppTopBar
 import com.armoniaciclica.app.ui.theme.ArmoniaciclicaTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +41,28 @@ fun AppRoot() { // Raíz de la app para separar responsabilidades
     val navController = rememberNavController() // Controlador de navegación
     ArmoniaciclicaTheme { // Provee colores/tipografías personalizados
         Surface(color = MaterialTheme.colorScheme.background) { // Fondo general
-            AppNavGraph(navController = navController) // Carga el NavHost con todas las pantallas
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route ?: ""
+
+            Scaffold(
+                topBar = {
+                    AppTopBar(
+                        title = "",
+                        onNavigateBack = null,
+                        showMenu = true,
+                        onHomeClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Home.path) },
+                        onCalendarClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Calendar.path) },
+                        onSymptomsClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Symptoms.path) },
+                        onEducationClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Education.path) },
+                        onProfileClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Profile.path) },
+                        currentRoute = currentRoute
+                    )
+                }
+            ) { innerPadding ->
+                androidx.compose.foundation.layout.Box(modifier = androidx.compose.ui.Modifier.padding(innerPadding)) {
+                    AppNavGraph(navController = navController)
+                }
+            }
         }
     }
 }

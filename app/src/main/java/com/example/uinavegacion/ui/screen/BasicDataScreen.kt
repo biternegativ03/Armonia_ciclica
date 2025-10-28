@@ -16,15 +16,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.armoniaciclica.app.ui.theme.PinkPrimary
 import com.armoniaciclica.app.ui.theme.PurplePrimary
+import com.example.uinavegacion.viewmodel.SharedViewModel
 
 @Composable
 fun BasicDataScreen(
+    sharedViewModel: SharedViewModel,
     onContinueClick: () -> Unit
 ) {
     var age by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var contraceptiveMethod by remember { mutableStateOf("") }
+
+    // Estados de error
+    var ageError by remember { mutableStateOf<String?>(null) }
+    var weightError by remember { mutableStateOf<String?>(null) }
+    var heightError by remember { mutableStateOf<String?>(null) }
+    var methodError by remember { mutableStateOf<String?>(null) }
     
     Box(
         modifier = Modifier
@@ -66,67 +74,131 @@ fun BasicDataScreen(
             ) {
                 OutlinedTextField(
                     value = age,
-                    onValueChange = { age = it },
+                    onValueChange = {
+                        age = it
+                        // Validación simple: no vacío y sólo dígitos
+                        ageError = when {
+                            it.isBlank() -> "La edad es obligatoria"
+                            !it.all { ch -> ch.isDigit() } -> "La edad debe ser numérica"
+                            else -> null
+                        }
+                    },
                     label = { Text("Edad (años)") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PinkPrimary,
-                        focusedLabelColor = PinkPrimary
+                        focusedLabelColor = PinkPrimary,
+                        errorBorderColor = Color.Red,
+                        errorLabelColor = Color.Red
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    isError = ageError != null,
+                    supportingText = {
+                        if (ageError != null) Text(text = ageError!!, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+                    }
                 )
                 
                 OutlinedTextField(
                     value = weight,
-                    onValueChange = { weight = it },
+                    onValueChange = {
+                        weight = it
+                        // Validación: no vacío y formato numérico (acepta decimal con punto)
+                        weightError = when {
+                            it.isBlank() -> "El peso es obligatorio"
+                            !it.matches(Regex("^\\d+(\\\\.\\d+)?$")) -> "Peso inválido"
+                            else -> null
+                        }
+                    },
                     label = { Text("Peso (kg)") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PinkPrimary,
-                        focusedLabelColor = PinkPrimary
+                        focusedLabelColor = PinkPrimary,
+                        errorBorderColor = Color.Red,
+                        errorLabelColor = Color.Red
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    isError = weightError != null,
+                    supportingText = {
+                        if (weightError != null) Text(text = weightError!!, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+                    }
                 )
                 
                 OutlinedTextField(
                     value = height,
-                    onValueChange = { height = it },
+                    onValueChange = {
+                        height = it
+                        // Validación: no vacío y sólo dígitos
+                        heightError = when {
+                            it.isBlank() -> "La altura es obligatoria"
+                            !it.all { ch -> ch.isDigit() } -> "La altura debe ser numérica"
+                            else -> null
+                        }
+                    },
                     label = { Text("Altura (cm)") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PinkPrimary,
-                        focusedLabelColor = PinkPrimary
+                        focusedLabelColor = PinkPrimary,
+                        errorBorderColor = Color.Red,
+                        errorLabelColor = Color.Red
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    isError = heightError != null,
+                    supportingText = {
+                        if (heightError != null) Text(text = heightError!!, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+                    }
                 )
                 
                 OutlinedTextField(
                     value = contraceptiveMethod,
-                    onValueChange = { contraceptiveMethod = it },
+                    onValueChange = {
+                        contraceptiveMethod = it
+                        methodError = if (it.isBlank()) "Debes indicar un método anticonceptivo" else null
+                    },
                     label = { Text("Método anticonceptivo") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PinkPrimary,
-                        focusedLabelColor = PinkPrimary
+                        focusedLabelColor = PinkPrimary,
+                        errorBorderColor = Color.Red,
+                        errorLabelColor = Color.Red
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    isError = methodError != null,
+                    supportingText = {
+                        if (methodError != null) Text(text = methodError!!, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+                    }
                 )
             }
             
             Spacer(modifier = Modifier.height(60.dp))
             
-            // Botón de continuar
+            // Botón de continuar (habilitado sólo si todos los campos están válidos)
+            val allValid = listOf(ageError, weightError, heightError, methodError).all { it == null } &&
+                    age.isNotBlank() && weight.isNotBlank() && height.isNotBlank() && contraceptiveMethod.isNotBlank()
+
             Button(
-                onClick = onContinueClick,
+                onClick = {
+                    if (allValid) {
+                        // Guardar en el ViewModel compartido antes de continuar
+                        sharedViewModel.age = age.trim()
+                        sharedViewModel.weight = weight.trim()
+                        sharedViewModel.height = height.trim()
+                        sharedViewModel.contraceptiveMethod = contraceptiveMethod.trim()
+                        onContinueClick()
+                    }
+                },
+                enabled = allValid,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = PinkPrimary
+                    containerColor = if (allValid) PinkPrimary else Color.LightGray
                 ),
                 shape = RoundedCornerShape(25.dp)
             ) {

@@ -18,12 +18,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.armoniaciclica.app.ui.theme.PinkPrimary
 import com.armoniaciclica.app.ui.theme.PurplePrimary
+import com.example.uinavegacion.viewmodel.SharedViewModel
+import androidx.compose.ui.platform.LocalContext
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Composable
 fun DataConfirmationScreen(
+    sharedViewModel: SharedViewModel,
     onEditClick: () -> Unit,
     onStartUsingClick: () -> Unit
 ) {
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
+    val ctx = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -115,7 +122,7 @@ fun DataConfirmationScreen(
                             modifier = Modifier.size(24.dp)
                         )
                         Text(
-                            text = "Salud: 25 años, 60kg",
+                            text = "Salud: ${sharedViewModel.age} años, ${sharedViewModel.weight}kg",
                             color = Color.Black,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
@@ -146,7 +153,7 @@ fun DataConfirmationScreen(
                             modifier = Modifier.size(24.dp)
                         )
                         Text(
-                            text = "Ciclo: 15 Oct 2024",
+                            text = sharedViewModel.lastPeriodDate?.format(formatter) ?: "No seleccionada",
                             color = Color.Black,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium

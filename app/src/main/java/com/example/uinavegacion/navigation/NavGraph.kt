@@ -15,9 +15,13 @@ import androidx.compose.runtime.rememberCoroutineScope // Alcance de corrutina
 
 // Importar todas las pantallas
 import com.armoniaciclica.app.ui.screen.*
+import com.example.uinavegacion.viewmodel.SharedViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable // Gráfico de navegación completo
 fun AppNavGraph(navController: NavHostController) {
+    // ViewModel compartido para pasar datos entre pantallas de configuración
+    val sharedViewModel: SharedViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = Route.Welcome.path
@@ -67,18 +71,21 @@ fun AppNavGraph(navController: NavHostController) {
         
         composable(Route.BasicData.path) {
             BasicDataScreen(
+                sharedViewModel = sharedViewModel,
                 onContinueClick = { navController.navigate(Route.LastPeriod.path) }
             )
         }
         
         composable(Route.LastPeriod.path) {
             LastPeriodScreen(
+                sharedViewModel = sharedViewModel,
                 onConfirmDateClick = { navController.navigate(Route.DataConfirmation.path) }
             )
         }
         
         composable(Route.DataConfirmation.path) {
             DataConfirmationScreen(
+                sharedViewModel = sharedViewModel,
                 onEditClick = { navController.navigate(Route.ProfileSelection.path) },
                 onStartUsingClick = { navController.navigate(Route.Home.path) }
             )

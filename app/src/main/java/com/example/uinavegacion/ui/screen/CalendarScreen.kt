@@ -1,7 +1,21 @@
 package com.armoniaciclica.app.ui.screen
 
+import android.Manifest
+import android.content.ContentUris
+import android.content.pm.PackageManager
+import android.provider.CalendarContract
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.core.content.ContextCompat
+import android.content.Context
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import com.armoniaciclica.app.ui.components.MainScaffold
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -23,17 +37,67 @@ import com.armoniaciclica.app.ui.theme.*
 
 @Composable
 fun CalendarScreen(
+    navController: NavController,
     onHomeClick: () -> Unit,
     onSymptomsClick: () -> Unit,
     onEducationClick: () -> Unit,
     onProfileClick: () -> Unit
 ) {
+    MainScaffold(
+        navController = navController,
+        title = "Calendario",
+        currentRoute = "calendar"
+    ) { paddingValues -> 
+    val context = LocalContext.current
     val calendarDays = (1..31).toList()
     val currentDay = 16
+    
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val readGranted = permissions[Manifest.permission.READ_CALENDAR] ?: false
+        val writeGranted = permissions[Manifest.permission.WRITE_CALENDAR] ?: false
+        
+        if (readGranted && writeGranted) {
+            // Aquí cargaremos los eventos del calendario
+            loadCalendarEvents(context)
+        } else {
+            Toast.makeText(
+                context,
+                "Se necesitan permisos para acceder al calendario",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+    
+    // Verificar y solicitar permisos
+    fun checkAndRequestPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_CALENDAR
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_CALENDAR
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Ya tenemos los permisos, cargar eventos
+            loadCalendarEvents(context)
+        } else {
+            // Solicitar permisos
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.READ_CALENDAR,
+                    Manifest.permission.WRITE_CALENDAR
+                )
+            )
+        }
+    }
     
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .background(Color.White)
     ) {
         Column(
@@ -200,16 +264,82 @@ fun CalendarScreen(
                         }
                     }
                 }
+
+                // Botón para cargar eventos del calendario
+                Button(
+                    onClick = { checkAndRequestPermissions() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PinkPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Event,
+                            contentDescription = "Calendario",
+                            tint = Color.White
+                        )
+                        Text(
+                            text = "Ver eventos del calendario",
+                            color = Color.White
+                        )
+                    }
+                }
             }
         }
         
-        // Bottom Navigation
-        BottomNavigation(
-            onHomeClick = onHomeClick,
-            onSymptomsClick = onSymptomsClick,
-            onEducationClick = onEducationClick,
-            onProfileClick = onProfileClick,
-            selectedItem = "calendar"
+        }
+    }
+}
+
+private fun loadCalendarEvents(context: Context) {
+    val contentResolver = context.contentResolver
+    val uri = CalendarContract.Events.CONTENT_URI
+    val selection = "(${CalendarContract.Events.DTSTART} >= ?)"
+    val now = System.currentTimeMillis()
+    val selectionArgs = arrayOf(now.toString())
+    
+    try {
+        val cursor = contentResolver.query(
+            uri,
+            arrayOf(
+                CalendarContract.Events._ID,
+                CalendarContract.Events.TITLE,
+                CalendarContract.Events.DTSTART,
+                CalendarContract.Events.DTEND
+            ),
+            selection,
+            selectionArgs,
+            null
         )
+        
+        cursor?.use { 
+            while (it.moveToNext()) {
+                val id = it.getLong(0)
+                val title = it.getString(1)
+                val start = it.getLong(2)
+                val end = it.getLong(3)
+                
+                // Aquí puedes procesar cada evento
+                // Por ahora solo mostraremos un Toast como ejemplo
+                Toast.makeText(
+                    context,
+                    "Evento encontrado: $title",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    } catch (e: SecurityException) {
+        Toast.makeText(
+            context,
+            "Error al acceder al calendario: ${e.message}",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

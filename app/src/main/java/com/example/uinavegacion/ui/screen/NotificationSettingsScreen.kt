@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bell
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -75,7 +75,7 @@ fun NotificationSettingsScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Bell,
+                            imageVector = Icons.Default.Notifications,
                             contentDescription = null,
                             tint = PinkPrimary,
                             modifier = Modifier.size(24.dp)

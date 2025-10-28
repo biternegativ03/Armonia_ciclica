@@ -97,6 +97,7 @@ fun AppNavGraph(navController: NavHostController) {
         
         composable(Route.Calendar.path) {
             CalendarScreen(
+                navController = navController,
                 onHomeClick = { navController.navigate(Route.Home.path) },
                 onSymptomsClick = { navController.navigate(Route.Symptoms.path) },
                 onEducationClick = { navController.navigate(Route.Education.path) },

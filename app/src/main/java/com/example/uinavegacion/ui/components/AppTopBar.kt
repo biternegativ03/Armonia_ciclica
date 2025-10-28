@@ -1,11 +1,8 @@
-package com.example.uinavegacion.ui.components
+package com.armoniaciclica.app.ui.components
 
-import androidx.compose.material.icons.Icons // Conjunto de íconos Material
-import androidx.compose.material.icons.filled.Home // Ícono Home
-import androidx.compose.material.icons.filled.AccountCircle // Ícono Login
-import androidx.compose.material.icons.filled.Menu // Ícono hamburguesa
-import androidx.compose.material.icons.filled.MoreVert // Ícono 3 puntitos (overflow)
-import androidx.compose.material.icons.filled.Person // Ícono Registro
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.CenterAlignedTopAppBar // TopAppBar centrada
 import androidx.compose.material3.DropdownMenu // Menú desplegable
 import androidx.compose.material3.DropdownMenuItem // Opción del menú
@@ -19,64 +16,96 @@ import androidx.compose.runtime.* // remember / mutableStateOf
 import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable // Composable reutilizable: barra superior
+@Composable
 fun AppTopBar(
-    onOpenDrawer: () -> Unit, // Abre el drawer (hamburguesa)
-    onHome: () -> Unit,       // Navega a Home
-    onLogin: () -> Unit,      // Navega a Login
-    onRegister: () -> Unit    // Navega a Registro
+    title: String,
+    onNavigateBack: (() -> Unit)? = null,
+    showMenu: Boolean = true,
+    onHomeClick: () -> Unit,
+    onCalendarClick: () -> Unit,
+    onSymptomsClick: () -> Unit,
+    onEducationClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    currentRoute: String
 ) {
-    //lo que hace es crear una variable de estado recordada que le dice a la interfaz
-    // si el menú desplegable de 3 puntitos debe estar visible (true) o oculto (false).
-    var showMenu by remember { mutableStateOf(false) } // Estado del menú overflow
+    var showDropdownMenu by remember { mutableStateOf(false) }
 
-    CenterAlignedTopAppBar( // Barra alineada al centro
+    CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary
         ),
-        title = { // Slot del título
+        title = {
             Text(
-                text = "Demo Navegación Compose", // Título visible
-                style = MaterialTheme.typography.titleLarge, // Estilo grande
-                maxLines = 1,              // asegura una sola línea Int.MAX_VALUE   // permite varias líneas
-                overflow = TextOverflow.Ellipsis // agrega "..." si no cabe
-
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         },
-        navigationIcon = { // Ícono a la izquierda (hamburguesa)
-            IconButton(onClick = onOpenDrawer) { // Al presionar, abre drawer
-                Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menú") // Ícono
+        navigationIcon = {
+            if (onNavigateBack != null) {
+                IconButton(onClick = onNavigateBack) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Regresar",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         },
-        actions = { // Acciones a la derecha (íconos + overflow)
-            IconButton(onClick = onHome) { // Ir a Home
-                Icon(Icons.Filled.Home, contentDescription = "Home") // Ícono Home
-            }
-            IconButton(onClick = onLogin) { // Ir a Login
-                Icon(Icons.Filled.AccountCircle, contentDescription = "Login") // Ícono Login
-            }
-            IconButton(onClick = onRegister) { // Ir a Registro
-                Icon(Icons.Filled.Person, contentDescription = "Registro") // Ícono Registro
-            }
-            IconButton(onClick = { showMenu = true }) { // Abre menú overflow
-                Icon(Icons.Filled.MoreVert, contentDescription = "Más") // Ícono 3 puntitos
-            }
-            DropdownMenu(
-                expanded = showMenu, // Si está abierto
-                onDismissRequest = { showMenu = false } // Cierra al tocar fuera
-            ) {
-                DropdownMenuItem( // Opción Home
-                    text = { Text("Home") }, // Texto opción
-                    onClick = { showMenu = false; onHome() } // Navega y cierra
-                )
-                DropdownMenuItem( // Opción Login
-                    text = { Text("Login") },
-                    onClick = { showMenu = false; onLogin() }
-                )
-                DropdownMenuItem( // Opción Registro
-                    text = { Text("Registro") },
-                    onClick = { showMenu = false; onRegister() }
-                )
+        actions = {
+            if (showMenu) {
+                IconButton(
+                    onClick = onHomeClick,
+                    enabled = currentRoute != "home"
+                ) {
+                    Icon(
+                        imageVector = if (currentRoute == "home") Icons.Filled.Home else Icons.Outlined.Home,
+                        contentDescription = "Inicio",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                IconButton(
+                    onClick = onCalendarClick,
+                    enabled = currentRoute != "calendar"
+                ) {
+                    Icon(
+                        imageVector = if (currentRoute == "calendar") Icons.Filled.CalendarMonth else Icons.Outlined.CalendarMonth,
+                        contentDescription = "Calendario",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                IconButton(
+                    onClick = onSymptomsClick,
+                    enabled = currentRoute != "symptoms"
+                ) {
+                    Icon(
+                        imageVector = if (currentRoute == "symptoms") Icons.Filled.HealthAndSafety else Icons.Outlined.HealthAndSafety,
+                        contentDescription = "Síntomas",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                IconButton(
+                    onClick = onEducationClick,
+                    enabled = currentRoute != "education"
+                ) {
+                    Icon(
+                        imageVector = if (currentRoute == "education") Icons.Filled.School else Icons.Outlined.School,
+                        contentDescription = "Educación",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                IconButton(
+                    onClick = onProfileClick,
+                    enabled = currentRoute != "profile"
+                ) {
+                    Icon(
+                        imageVector = if (currentRoute == "profile") Icons.Filled.Person else Icons.Outlined.Person,
+                        contentDescription = "Perfil",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         }
     )

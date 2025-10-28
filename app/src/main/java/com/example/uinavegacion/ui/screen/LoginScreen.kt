@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import com.example.uinavegacion.domain.validation.validateEmail
+import com.example.uinavegacion.domain.validation.validateStrongPass
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,6 +30,8 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
     
     Box(
         modifier = Modifier
@@ -69,29 +73,59 @@ fun LoginScreen(
             ) {
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { 
+                        email = it
+                        emailError = validateEmail(it)
+                    },
                     label = { Text("Correo electrónico") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PinkPrimary,
-                        focusedLabelColor = PinkPrimary
+                        focusedLabelColor = PinkPrimary,
+                        errorBorderColor = Color.Red,
+                        errorLabelColor = Color.Red
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    isError = emailError != null,
+                    supportingText = {
+                        if (emailError != null) {
+                            Text(
+                                text = emailError!!,
+                                color = Color.Red,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
                 )
                 
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { 
+                        password = it
+                        passwordError = validateStrongPass(it)
+                    },
                     label = { Text("Contraseña") },
                     modifier = Modifier.fillMaxWidth(),
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PinkPrimary,
-                        focusedLabelColor = PinkPrimary
+                        focusedLabelColor = PinkPrimary,
+                        errorBorderColor = Color.Red,
+                        errorLabelColor = Color.Red
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    isError = passwordError != null,
+                    supportingText = {
+                        if (passwordError != null) {
+                            Text(
+                                text = passwordError!!,
+                                color = Color.Red,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
                 )
             }
             
@@ -113,7 +147,19 @@ fun LoginScreen(
             
             // Botón de iniciar sesión
             Button(
-                onClick = onLoginClick,
+                onClick = {
+                    // Validar antes de iniciar sesión
+                    val emailValidation = validateEmail(email)
+                    val passwordValidation = validateStrongPass(password)
+                    
+                    emailError = emailValidation
+                    passwordError = passwordValidation
+                    
+                    // Solo navegar si no hay errores
+                    if (emailValidation == null && passwordValidation == null) {
+                        onLoginClick()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp),

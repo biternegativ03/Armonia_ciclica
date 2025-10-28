@@ -156,7 +156,7 @@ fun SymptomsScreen(
         BottomNavigation(
             onHomeClick = onHomeClick,
             onCalendarClick = onCalendarClick,
-            onSymptomsClick = onSymptomsClick,
+            onSymptomsClick = { /* Ya estamos en Symptoms */ },
             onEducationClick = onEducationClick,
             onProfileClick = onProfileClick,
             selectedItem = "symptoms"

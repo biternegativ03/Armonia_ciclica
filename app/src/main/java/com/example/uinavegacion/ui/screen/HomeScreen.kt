@@ -167,6 +167,7 @@ fun HomeScreen(
         
         // Bottom Navigation
         BottomNavigation(
+            onHomeClick = { /* Ya estamos en Home */ },
             onCalendarClick = onCalendarClick,
             onSymptomsClick = onSymptomsClick,
             onEducationClick = onEducationClick,
@@ -178,6 +179,7 @@ fun HomeScreen(
 
 @Composable
 fun BottomNavigation(
+    onHomeClick: () -> Unit,
     onCalendarClick: () -> Unit,
     onSymptomsClick: () -> Unit,
     onEducationClick: () -> Unit,
@@ -186,8 +188,7 @@ fun BottomNavigation(
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter),
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),

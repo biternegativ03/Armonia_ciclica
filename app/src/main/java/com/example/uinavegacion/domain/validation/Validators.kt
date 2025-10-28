@@ -10,10 +10,26 @@ fun validateNameLettersOnly(nombre: String): String?{
 }
 
 //validaciones del correo: formato y no este vacio
-fun validateEmail(email: String): String?{
+fun validateEmail(email: String): String? {
     if(email.isBlank()) return "El correo es obligatorio"
-    val ok = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    return if(!ok) "Formato de correo Inválido" else null
+    if(!email.contains("@")) return "El correo debe contener @"
+    if(!email.contains(".")) return "El correo debe contener un dominio (.com, .es, etc.)"
+    
+    val parts = email.split("@")
+    if(parts.size != 2) return "Formato de correo inválido"
+    
+    val localPart = parts[0]
+    val domain = parts[1]
+    
+    if(localPart.isBlank()) return "El correo debe tener un nombre de usuario"
+    if(domain.isBlank()) return "El correo debe tener un dominio"
+    if(!domain.contains(".")) return "El dominio debe tener una extensión (.com, .es, etc.)"
+    
+    val domainParts = domain.split(".")
+    if(domainParts.size < 2) return "El dominio debe tener al menos una extensión"
+    if(domainParts.any { it.isBlank() }) return "El dominio no puede contener partes vacías"
+    
+    return null
 }
 
 //validacion de teléfono: no vacio, longitud, solo numeros

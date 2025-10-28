@@ -29,7 +29,7 @@ fun EducationScreen(
 ) {
     val educationItems = listOf(
         "Para tu fase actual" to Icons.Default.Lightbulb,
-        "Alimentación en fase lútea" to Icons.Default.Apple,
+        "Alimentación en fase lútea" to Icons.Default.Restaurant,
         "Ejercicios recomendados" to Icons.Default.FitnessCenter,
         "Biblioteca de artículos" to Icons.Default.Book,
         "Ciclo menstrual básico • 8 min" to Icons.Default.Schedule
@@ -111,7 +111,7 @@ fun EducationScreen(
             onHomeClick = onHomeClick,
             onCalendarClick = onCalendarClick,
             onSymptomsClick = onSymptomsClick,
-            onEducationClick = onEducationClick,
+            onEducationClick = { /* Ya estamos en Education */ },
             onProfileClick = onProfileClick,
             selectedItem = "education"
         )

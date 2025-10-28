@@ -128,7 +128,7 @@ fun ProfileScreen(
             onCalendarClick = onCalendarClick,
             onSymptomsClick = onSymptomsClick,
             onEducationClick = onEducationClick,
-            onProfileClick = onProfileClick,
+            onProfileClick = { /* Ya estamos en Profile */ },
             selectedItem = "profile"
         )
     }

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "UINavegacion"
+rootProject.name = "Armoniaciclica"
 include(":app")
  

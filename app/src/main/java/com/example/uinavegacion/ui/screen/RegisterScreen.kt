@@ -6,6 +6,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -25,18 +27,10 @@ import com.example.uinavegacion.domain.validation.*
 @Composable
 fun RegisterScreen(
     onRegisterClick: () -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    vm: com.example.uinavegacion.viewmodel.RegisterViewModel = viewModel()
 ) {
-    var fullName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    // Estados de error usando los validadores centrales
-    var fullNameError by remember { mutableStateOf<String?>(null) }
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var phoneError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
+    val uiState by vm.ui.collectAsState()
     
     Box(
         modifier = Modifier
@@ -77,11 +71,8 @@ fun RegisterScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedTextField(
-                    value = fullName,
-                    onValueChange = {
-                        fullName = it
-                        fullNameError = validateNameLettersOnly(it)
-                    },
+                    value = uiState.name,
+                    onValueChange = { vm.onName(it) },
                     label = { Text("Nombre completo") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -92,23 +83,20 @@ fun RegisterScreen(
                         errorLabelColor = Color.Red
                     ),
                     shape = RoundedCornerShape(12.dp),
-                    isError = fullNameError != null
+                    isError = uiState.nameError != null
                 )
 
                 AnimatedVisibility(
-                    visible = fullNameError != null,
+                    visible = uiState.nameError != null,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    if (fullNameError != null) Text(text = fullNameError!!, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+                    uiState.nameError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
                 }
                 
                 OutlinedTextField(
-                    value = email,
-                    onValueChange = {
-                        email = it
-                        emailError = validateEmail(it)
-                    },
+                    value = uiState.email,
+                    onValueChange = { vm.onEmail(it) },
                     label = { Text("Correo electrónico") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -119,23 +107,20 @@ fun RegisterScreen(
                         errorLabelColor = Color.Red
                     ),
                     shape = RoundedCornerShape(12.dp),
-                    isError = emailError != null
+                    isError = uiState.emailError != null
                 )
 
                 AnimatedVisibility(
-                    visible = emailError != null,
+                    visible = uiState.emailError != null,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    if (emailError != null) Text(text = emailError!!, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+                    uiState.emailError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
                 }
                 
                 OutlinedTextField(
-                    value = phone,
-                    onValueChange = {
-                        phone = it
-                        phoneError = validatePhoneDigitsOnly(it)
-                    },
+                    value = uiState.phone,
+                    onValueChange = { vm.onPhone(it) },
                     label = { Text("Teléfono") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
@@ -146,23 +131,20 @@ fun RegisterScreen(
                         errorLabelColor = Color.Red
                     ),
                     shape = RoundedCornerShape(12.dp),
-                    isError = phoneError != null
+                    isError = uiState.phoneError != null
                 )
 
                 AnimatedVisibility(
-                    visible = phoneError != null,
+                    visible = uiState.phoneError != null,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    if (phoneError != null) Text(text = phoneError!!, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+                    uiState.phoneError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
                 }
                 
                 OutlinedTextField(
-                    value = password,
-                    onValueChange = {
-                        password = it
-                        passwordError = validateStrongPass(it)
-                    },
+                    value = uiState.pass,
+                    onValueChange = { vm.onPass(it) },
                     label = { Text("Contraseña") },
                     modifier = Modifier.fillMaxWidth(),
                     visualTransformation = PasswordVisualTransformation(),
@@ -174,23 +156,22 @@ fun RegisterScreen(
                         errorLabelColor = Color.Red
                     ),
                     shape = RoundedCornerShape(12.dp),
-                    isError = passwordError != null
+                    isError = uiState.passError != null
                 )
 
                 AnimatedVisibility(
-                    visible = passwordError != null,
+                    visible = uiState.passError != null,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    if (passwordError != null) Text(text = passwordError!!, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+                    uiState.passError?.let { Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall) }
                 }
             }
             
             Spacer(modifier = Modifier.height(40.dp))
             
             // Botón de crear cuenta
-            val allValid = listOf(fullNameError, emailError, phoneError, passwordError).all { it == null } &&
-                    fullName.isNotBlank() && email.isNotBlank() && phone.isNotBlank() && password.isNotBlank()
+        val allValid = uiState.valid
 
             Button(
                 onClick = {

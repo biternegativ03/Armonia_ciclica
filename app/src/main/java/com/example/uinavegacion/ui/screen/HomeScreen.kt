@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
 package com.armoniaciclica.app.ui.screen
 
 import androidx.compose.foundation.background
@@ -113,10 +114,10 @@ fun HomeScreen(
                             val currentDay = 16f
                             val progress = currentDay / totalCycleDays
                             CircularProgressIndicator(
-                                progress = progress,
                                 modifier = Modifier.size(96.dp),
                                 color = FollicularGreen,
-                                strokeWidth = 8.dp
+                                strokeWidth = 8.dp,
+                                progress = { progress }
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
@@ -183,15 +184,7 @@ fun HomeScreen(
             }
         }
         
-        // Bottom Navigation
-        BottomNavigation(
-            onHomeClick = { /* Ya estamos en Home */ },
-            onCalendarClick = onCalendarClick,
-            onSymptomsClick = onSymptomsClick,
-            onEducationClick = onEducationClick,
-            onProfileClick = onProfileClick,
-            selectedItem = "home"
-        )
+        // Bottom Navigation removed: AppTopBar in AppRoot provides the top navigation
     }
 }
 

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.armoniaciclica.app.ui.theme.PinkPrimary
 import com.armoniaciclica.app.ui.theme.PurplePrimary
+import com.example.uinavegacion.domain.validation.*
 import com.example.uinavegacion.viewmodel.SharedViewModel
 
 @Composable
@@ -76,12 +77,7 @@ fun BasicDataScreen(
                     value = age,
                     onValueChange = {
                         age = it
-                        // Validación simple: no vacío y sólo dígitos
-                        ageError = when {
-                            it.isBlank() -> "La edad es obligatoria"
-                            !it.all { ch -> ch.isDigit() } -> "La edad debe ser numérica"
-                            else -> null
-                        }
+                        ageError = validateAge(it)
                     },
                     label = { Text("Edad (años)") },
                     modifier = Modifier.fillMaxWidth(),
@@ -103,12 +99,7 @@ fun BasicDataScreen(
                     value = weight,
                     onValueChange = {
                         weight = it
-                        // Validación: no vacío y formato numérico (acepta decimal con punto)
-                        weightError = when {
-                            it.isBlank() -> "El peso es obligatorio"
-                            !it.matches(Regex("^\\d+(\\\\.\\d+)?$")) -> "Peso inválido"
-                            else -> null
-                        }
+                        weightError = validateWeight(it)
                     },
                     label = { Text("Peso (kg)") },
                     modifier = Modifier.fillMaxWidth(),
@@ -130,12 +121,7 @@ fun BasicDataScreen(
                     value = height,
                     onValueChange = {
                         height = it
-                        // Validación: no vacío y sólo dígitos
-                        heightError = when {
-                            it.isBlank() -> "La altura es obligatoria"
-                            !it.all { ch -> ch.isDigit() } -> "La altura debe ser numérica"
-                            else -> null
-                        }
+                        heightError = validateHeight(it)
                     },
                     label = { Text("Altura (cm)") },
                     modifier = Modifier.fillMaxWidth(),
@@ -157,7 +143,7 @@ fun BasicDataScreen(
                     value = contraceptiveMethod,
                     onValueChange = {
                         contraceptiveMethod = it
-                        methodError = if (it.isBlank()) "Debes indicar un método anticonceptivo" else null
+                        methodError = validateContraceptive(it)
                     },
                     label = { Text("Método anticonceptivo") },
                     modifier = Modifier.fillMaxWidth(),

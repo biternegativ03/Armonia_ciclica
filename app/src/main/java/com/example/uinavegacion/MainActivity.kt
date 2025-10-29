@@ -10,11 +10,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import com.armoniaciclica.app.navigation.AppNavGraph
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.armoniaciclica.app.navigation.AppNavGraph
 import com.armoniaciclica.app.ui.components.AppTopBar
 import com.armoniaciclica.app.ui.theme.ArmoniaciclicaTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.ui.Modifier
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,32 +41,49 @@ Piensa en él como una “lona base” sobre la cual vas a pintar tu UI.
 * Si cambias el tema a dark mode, colorScheme.background
 * cambia automáticamente y el Surface pinta la pantalla con el nuevo color.
 * */
-@Composable // Indica que esta función dibuja UI
-fun AppRoot() { // Raíz de la app para separar responsabilidades
-    val navController = rememberNavController() // Controlador de navegación
-    ArmoniaciclicaTheme { // Provee colores/tipografías personalizados
-        Surface(color = MaterialTheme.colorScheme.background) { // Fondo general
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route ?: ""
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppRoot() {
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
+    ArmoniaciclicaTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
             Scaffold(
+                contentWindowInsets = WindowInsets.safeDrawing,
                 topBar = {
-                    AppTopBar(
-                        title = "",
-                        onNavigateBack = null,
-                        showMenu = true,
-                        onHomeClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Home.path) },
-                        onCalendarClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Calendar.path) },
-                        onSymptomsClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Symptoms.path) },
-                        onEducationClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Education.path) },
-                        onProfileClick = { navController.navigate(com.armoniaciclica.app.navigation.Route.Profile.path) },
-                        currentRoute = currentRoute
-                    )
+                    // Solo mostrar TopBar en pantallas principales post-onboarding
+                    when (currentRoute) {
+                        "home", "calendar", "symptoms", "education", "profile" -> {
+                            AppTopBar(
+                                title = when (currentRoute) {
+                                    "home" -> "Inicio"
+                                    "calendar" -> "Calendario"
+                                    "symptoms" -> "Síntomas"
+                                    "education" -> "Educación"
+                                    "profile" -> "Perfil"
+                                    else -> ""
+                                },
+                                onNavigateBack = if (navController.previousBackStackEntry != null) {
+                                    { navController.navigateUp() }
+                                } else null,
+                                showMenu = true,
+                                onHomeClick = { navController.navigate("home") },
+                                onCalendarClick = { navController.navigate("calendar") },
+                                onSymptomsClick = { navController.navigate("symptoms") },
+                                onEducationClick = { navController.navigate("education") },
+                                onProfileClick = { navController.navigate("profile") },
+                                currentRoute = currentRoute ?: ""
+                            )
+                        }
+                    }
                 }
             ) { innerPadding ->
-                androidx.compose.foundation.layout.Box(modifier = androidx.compose.ui.Modifier.padding(innerPadding)) {
-                    AppNavGraph(navController = navController)
-                }
+                AppNavGraph(
+                    navController = navController,
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
         }
     }

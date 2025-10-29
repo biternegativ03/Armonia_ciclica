@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
 package com.armoniaciclica.app.ui.screen
 
 import android.Manifest
@@ -37,18 +38,10 @@ import com.armoniaciclica.app.ui.theme.*
 
 @Composable
 fun CalendarScreen(
-    navController: NavController,
-    onHomeClick: () -> Unit,
-    onSymptomsClick: () -> Unit,
-    onEducationClick: () -> Unit,
-    onProfileClick: () -> Unit
+    navController: NavController
 ) {
-    MainScaffold(
-        navController = navController,
-        title = "Calendario",
-        currentRoute = "calendar"
-    ) { paddingValues -> 
-    val context = LocalContext.current
+    MainScaffold { paddingValues ->
+        val context = LocalContext.current
     val calendarDays = (1..31).toList()
     val currentDay = 16
     
@@ -97,7 +90,7 @@ fun CalendarScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
+                    .padding(paddingValues)
             .background(Color.White)
     ) {
         Column(

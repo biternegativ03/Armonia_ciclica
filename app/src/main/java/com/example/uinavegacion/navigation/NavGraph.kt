@@ -1,4 +1,5 @@
 package com.armoniaciclica.app.navigation
+
 import androidx.compose.foundation.layout.padding // Para aplicar innerPadding
 import androidx.compose.material3.Scaffold // Estructura base con slots
 import androidx.compose.runtime.Composable // Marcador composable
@@ -15,16 +16,18 @@ import androidx.compose.runtime.rememberCoroutineScope // Alcance de corrutina
 
 // Importar todas las pantallas
 import com.armoniaciclica.app.ui.screen.*
+import com.armoniaciclica.app.ui.components.MainScaffold
 import com.example.uinavegacion.viewmodel.SharedViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable // Gráfico de navegación completo
-fun AppNavGraph(navController: NavHostController) {
+fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     // ViewModel compartido para pasar datos entre pantallas de configuración
     val sharedViewModel: SharedViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Route.Welcome.path
+        startDestination = Route.Welcome.path,
+        modifier = modifier
     ) {
         // Onboarding screens
         composable(Route.Welcome.path) {
@@ -93,56 +96,59 @@ fun AppNavGraph(navController: NavHostController) {
         
         // Main app screens
         composable(Route.Home.path) {
-            HomeScreen(
-                onRegisterSymptomsClick = { navController.navigate(Route.Symptoms.path) },
-                onCalendarClick = { navController.navigate(Route.Calendar.path) },
-                onSymptomsClick = { navController.navigate(Route.Symptoms.path) },
-                onEducationClick = { navController.navigate(Route.Education.path) },
-                onProfileClick = { navController.navigate(Route.Profile.path) }
-            )
+            MainScaffold { _ ->
+                HomeScreen(
+                    onRegisterSymptomsClick = { navController.navigate(Route.Symptoms.path) },
+                    onCalendarClick = { navController.navigate(Route.Calendar.path) },
+                    onSymptomsClick = { navController.navigate(Route.Symptoms.path) },
+                    onEducationClick = { navController.navigate(Route.Education.path) },
+                    onProfileClick = { navController.navigate(Route.Profile.path) }
+                )
+            }
         }
         
         composable(Route.Calendar.path) {
-            CalendarScreen(
-                navController = navController,
-                onHomeClick = { navController.navigate(Route.Home.path) },
-                onSymptomsClick = { navController.navigate(Route.Symptoms.path) },
-                onEducationClick = { navController.navigate(Route.Education.path) },
-                onProfileClick = { navController.navigate(Route.Profile.path) }
-            )
+            // CalendarScreen already uses MainScaffold internally
+            CalendarScreen(navController = navController)
         }
         
         composable(Route.Symptoms.path) {
-            SymptomsScreen(
-                onSaveSymptomsClick = { navController.navigate(Route.SymptomConfirmation.path) },
-                onHomeClick = { navController.navigate(Route.Home.path) },
-                onCalendarClick = { navController.navigate(Route.Calendar.path) },
-                onEducationClick = { navController.navigate(Route.Education.path) },
-                onProfileClick = { navController.navigate(Route.Profile.path) }
-            )
+            MainScaffold { _ ->
+                SymptomsScreen(
+                    onSaveSymptomsClick = { navController.navigate(Route.SymptomConfirmation.path) },
+                    onHomeClick = { navController.navigate(Route.Home.path) },
+                    onCalendarClick = { navController.navigate(Route.Calendar.path) },
+                    onEducationClick = { navController.navigate(Route.Education.path) },
+                    onProfileClick = { navController.navigate(Route.Profile.path) }
+                )
+            }
         }
         
         composable(Route.Education.path) {
-            EducationScreen(
-                onArticleClick = { navController.navigate(Route.ArticleDetail.path) },
-                onHomeClick = { navController.navigate(Route.Home.path) },
-                onCalendarClick = { navController.navigate(Route.Calendar.path) },
-                onSymptomsClick = { navController.navigate(Route.Symptoms.path) },
-                onProfileClick = { navController.navigate(Route.Profile.path) }
-            )
+            MainScaffold { _ ->
+                EducationScreen(
+                    onArticleClick = { navController.navigate(Route.ArticleDetail.path) },
+                    onHomeClick = { navController.navigate(Route.Home.path) },
+                    onCalendarClick = { navController.navigate(Route.Calendar.path) },
+                    onSymptomsClick = { navController.navigate(Route.Symptoms.path) },
+                    onProfileClick = { navController.navigate(Route.Profile.path) }
+                )
+            }
         }
         
         composable(Route.Profile.path) {
-            ProfileScreen(
-                onEditProfileClick = { navController.navigate(Route.EditProfile.path) },
-                onNotificationsClick = { navController.navigate(Route.NotificationSettings.path) },
-                onGoalsClick = { navController.navigate(Route.GoalSettings.path) },
-                onStatisticsClick = { /* TODO: Implementar estadísticas */ },
-                onHomeClick = { navController.navigate(Route.Home.path) },
-                onCalendarClick = { navController.navigate(Route.Calendar.path) },
-                onSymptomsClick = { navController.navigate(Route.Symptoms.path) },
-                onEducationClick = { navController.navigate(Route.Education.path) }
-            )
+            MainScaffold { _ ->
+                ProfileScreen(
+                    onEditProfileClick = { navController.navigate(Route.EditProfile.path) },
+                    onNotificationsClick = { navController.navigate(Route.NotificationSettings.path) },
+                    onGoalsClick = { navController.navigate(Route.GoalSettings.path) },
+                    onStatisticsClick = { /* TODO: Implementar estadísticas */ },
+                    onHomeClick = { navController.navigate(Route.Home.path) },
+                    onCalendarClick = { navController.navigate(Route.Calendar.path) },
+                    onSymptomsClick = { navController.navigate(Route.Symptoms.path) },
+                    onEducationClick = { navController.navigate(Route.Education.path) }
+                )
+            }
         }
         
         // Profile management screens

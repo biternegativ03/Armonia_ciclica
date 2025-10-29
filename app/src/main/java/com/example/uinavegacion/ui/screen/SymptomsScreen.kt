@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
 package com.armoniaciclica.app.ui.screen
 
 import androidx.compose.foundation.background
@@ -152,14 +153,6 @@ fun SymptomsScreen(
             }
         }
         
-        // Bottom Navigation
-        BottomNavigation(
-            onHomeClick = onHomeClick,
-            onCalendarClick = onCalendarClick,
-            onSymptomsClick = { /* Ya estamos en Symptoms */ },
-            onEducationClick = onEducationClick,
-            onProfileClick = onProfileClick,
-            selectedItem = "symptoms"
-        )
+        // Bottom Navigation removed: AppTopBar in AppRoot provides the top navigation
     }
 }

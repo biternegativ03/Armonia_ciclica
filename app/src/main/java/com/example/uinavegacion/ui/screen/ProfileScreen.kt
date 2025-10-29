@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
 package com.armoniaciclica.app.ui.screen
 
 import androidx.compose.foundation.background
@@ -122,15 +123,7 @@ fun ProfileScreen(
             }
         }
         
-        // Bottom Navigation
-        BottomNavigation(
-            onHomeClick = onHomeClick,
-            onCalendarClick = onCalendarClick,
-            onSymptomsClick = onSymptomsClick,
-            onEducationClick = onEducationClick,
-            onProfileClick = { /* Ya estamos en Profile */ },
-            selectedItem = "profile"
-        )
+        // Bottom Navigation removed: AppTopBar in AppRoot provides the top navigation
     }
 }
 

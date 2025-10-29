@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
 package com.example.uinavegacion.ui.components
 
 import androidx.compose.material.icons.Icons // Íconos Material

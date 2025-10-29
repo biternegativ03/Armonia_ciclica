@@ -114,10 +114,10 @@ fun HomeScreen(
                             val currentDay = 16f
                             val progress = currentDay / totalCycleDays
                             CircularProgressIndicator(
+                                progress = progress,
                                 modifier = Modifier.size(96.dp),
                                 color = FollicularGreen,
-                                strokeWidth = 8.dp,
-                                progress = { progress }
+                                strokeWidth = 8.dp
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(

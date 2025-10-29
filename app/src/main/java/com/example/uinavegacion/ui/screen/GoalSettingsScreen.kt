@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -116,7 +116,7 @@ fun GoalSettingsScreen(
                 // Patrones de síntomas
                 TrackingOption(
                     title = "Patrones de síntomas",
-                    icon = Icons.AutoMirrored.Filled.TrendingUp,
+                    icon = Icons.Default.TrendingUp,
                     isEnabled = symptomPatterns,
                     onToggle = { symptomPatterns = it }
                 )

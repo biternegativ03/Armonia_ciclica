@@ -2,7 +2,7 @@ package com.armoniaciclica.app.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.CenterAlignedTopAppBar // TopAppBar centrada
 import androidx.compose.material3.DropdownMenu // Menú desplegable
@@ -52,7 +52,7 @@ fun AppTopBar(
             if (onNavigateBack != null) {
                 IconButton(onClick = onNavigateBack) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Regresar",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
